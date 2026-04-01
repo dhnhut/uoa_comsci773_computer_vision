@@ -51,7 +51,7 @@ def compute_single_cornerness_score(ix_square, iy_square, ixiy, r, c, alpha):
     return det - alpha * (trace**2)
 
 
-def kernal_sum(image, image_width, image_height):
+def kernel_sum(image, image_width, image_height):
     kernel_size = 3
     extended_image = np.pad(image, pad_width=1, mode="edge")
     square_image = np.zeros_like(image, dtype=np.float64)
@@ -65,9 +65,9 @@ def kernal_sum(image, image_width, image_height):
 def cornerness_score_matrix(
     ix_square, iy_square, ixiy, alpha, image_width, image_height
 ):
-    sum_ix_square = kernal_sum(ix_square, image_width, image_height)
-    sum_iy_square = kernal_sum(iy_square, image_width, image_height)
-    sum_ixiy = kernal_sum(ixiy, image_width, image_height)
+    sum_ix_square = kernel_sum(ix_square, image_width, image_height)
+    sum_iy_square = kernel_sum(iy_square, image_width, image_height)
+    sum_ixiy = kernel_sum(ixiy, image_width, image_height)
 
     cornerness_matrix = np.zeros_like(ix_square, dtype=np.float64)
 
