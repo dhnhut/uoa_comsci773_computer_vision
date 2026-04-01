@@ -25,10 +25,6 @@ def sobel_derivative(image, image_width, image_height, direction="x"):
 
     extended_image = np.pad(image, pad_width=1, mode="edge")
 
-    # # debug: print the extended image
-    # print("Extended image:")
-    # print(extended_image)
-
     filtered_image = np.zeros_like(image, dtype=np.float64)
     for i in range(image_height):
         for j in range(image_width):
@@ -88,7 +84,6 @@ def compute_cornerness_score(
 ):
     top = 1000
 
-    # top 1000 corners, represented as a list of tuples containing the x and y coordinates of each corner and its corresponding cornerness score
     corners = (
         cornerness_score_matrix(
             ix_square, iy_square, ixiy, alpha, image_width, image_height
@@ -100,32 +95,13 @@ def compute_cornerness_score(
     corners.sort(reverse=True)
     return corners[:top]  # Return top 1000 corners
 
-    # for r in range(image_height):
-    #     for c in range(image_width):
-    #         H_ix = ix_square[r, c]
-    #         H_iy = iy_square[r, c]
-    #         H_ixiy = ixiy[r, c]
-    #         # Compute cornerness score using the formula: R = det(H) - alpha * (trace(H))^2
-    #         score = compute_single_cornerness_score(
-    #             ix_square, iy_square, ixiy, r, c, alpha
-    #         )
 
-    #         if score <= threshold:
-    #             score = 0
-    #         corners.append((c, r, score))  # (x, y, cornerness score)
-    # corners.sort(
-    #     key=lambda x: x[2], reverse=True
-    # )  # Sort by cornerness score in descending order
-    # return corners[:top]  # Return top 1000 corners
-
-
-def non_maximum_suppression(cornerness_matrix, image_width, image_height):
-    # Create a copy of the cornerness matrix to store the results of non-maximum suppression
-    nms_matrix = np.zeros_like(cornerness_matrix, dtype=np.float64)
+def non_maximum_suppression(corner_response, image_width, image_height):
+    nms_c = np.zeros_like(corner_response, dtype=np.float64)
 
     for r in range(image_height):
         for c in range(image_width):
-            current_score = cornerness_matrix[r, c]
+            current_score = corner_response[r, c]
             if current_score == 0:
                 continue  # Skip if the cornerness score is zero
 
@@ -136,11 +112,11 @@ def non_maximum_suppression(cornerness_matrix, image_width, image_height):
             c_end = min(image_width, c + 2)
 
             # Get the maximum score in the neighborhood
-            neighborhood = cornerness_matrix[r_start:r_end, c_start:c_end]
+            neighborhood = corner_response[r_start:r_end, c_start:c_end]
             max_score = np.max(neighborhood)
 
             # If the current score is the maximum in the neighborhood, keep it; otherwise, set it to zero
             if current_score == max_score:
-                nms_matrix[r, c] = current_score
+                nms_c[r, c] = current_score
 
-    return nms_matrix
+    return nms_c
