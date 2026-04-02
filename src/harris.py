@@ -43,11 +43,8 @@ def compute_image_derivatives(image, image_width, image_height):
 
 
 def compute_single_cornerness_score(ix_square, iy_square, ixiy, r, c, alpha):
-    # print(f"Computing cornerness score for pixel (row {r}, col {c}):")
-    # print(f"I_x^2: {ix_square[r, c]}, I_y^2: {iy_square[r, c]}, I_xy: {ixiy[r, c]}")
     det = ix_square[r, c] * iy_square[r, c] - ixiy[r, c] ** 2
     trace = ix_square[r, c] + iy_square[r, c]
-    # print(f"det: {det}, trace: {trace}")
     return det - alpha * (trace**2)
 
 
